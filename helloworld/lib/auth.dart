@@ -76,7 +76,7 @@ class AuthService {
     }
   }
 
-// ===========================================================================================
+// =============================================================================
   // Login method
   static Future<bool> login({
     required String email,
@@ -122,6 +122,31 @@ class AuthService {
         ),
       );
       return false; // Login failed
+    }
+  }
+
+  // ===========================================================================
+
+  // Logout method
+  static Future<void> logout({required BuildContext context}) async {
+    try {
+      await _auth.signOut(); // Sign out the user
+
+      // Show success message
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Logout successful!'),
+          backgroundColor: Colors.green,
+        ),
+      );
+    } catch (e) {
+      // Handle errors during logout
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Error during logout: ${e.toString()}'),
+          backgroundColor: Colors.red,
+        ),
+      );
     }
   }
 }

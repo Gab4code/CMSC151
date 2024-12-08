@@ -350,9 +350,7 @@ class _RegisterPageState extends State<RegisterPage> {
                   if (isSuccessful) {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(
-                          builder: (context) =>
-                              const HomePage()), // Replace `NextPage` with your desired page widget.
+                      MaterialPageRoute(builder: (context) => const HomePage()),
                     );
                   } else {
                     ScaffoldMessenger.of(context).showSnackBar(

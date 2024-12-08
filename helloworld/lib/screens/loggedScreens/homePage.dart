@@ -36,8 +36,8 @@ class _HomePageState extends State<HomePage> {
         title: Text(
           "Twerk",
           style: GoogleFonts.poppins(
-              fontSize: 24,
-              fontWeight: FontWeight.w600,
+              fontSize: 32,
+              fontWeight: FontWeight.bold,
               color: const Color(0xFF004AAD)),
         ),
         actions: [

@@ -29,6 +29,16 @@ class AuthService {
         'createdAt': FieldValue.serverTimestamp(),
       });
 
+      await _firestore.collection('Users').doc(userId).collection('Active').doc("Job").set({
+        'JobName': '',
+        'JobDesc': '',
+      });
+
+      await _firestore.collection('Users').doc(userId).collection('History').doc("Job").set({
+        'JobName': '',
+        'JobDesc': '',
+      });
+
       // Show success message
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:helloworld/auth.dart';
 import 'package:helloworld/screens/loginPage.dart';
 
 class RegisterPage extends StatefulWidget {
@@ -326,16 +327,23 @@ class _RegisterPageState extends State<RegisterPage> {
 
               //Register BUTTON
               ElevatedButton(
-                onPressed: () {
-                  //Handle Register Button
-                  String email = emailController.text;
-                  String username = usernameController.text;
-                  String password = passwordController.text;
-                  String confirmPassword = confirmPasswordController.text;
-                  print('Entered email: $email'); // Use the email variable
-                  print('Entered username: $username');
-                  print('Entered password: $password');
-                  print('Entered confirmPassword: $confirmPassword');
+                onPressed: () async {
+                  if (passwordController.text !=
+                      confirmPasswordController.text) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text('Passwords do not match!'),
+                        backgroundColor: Colors.red,
+                      ),
+                    );
+                    return;
+                  }
+
+                  await AuthService.signUp(
+                    email: emailController.text,
+                    password: passwordController.text,
+                    context: context,
+                  );
                 },
                 style: ElevatedButton.styleFrom(
                   padding:

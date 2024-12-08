@@ -10,7 +10,8 @@ class SelectionScreen extends StatefulWidget {
 }
 
 class _SelectionScreenState extends State<SelectionScreen> {
-  bool _isEmployer = false; // Tracks whether to show Employee or Employer screen
+  bool _isEmployer =
+      false; // Tracks whether to show Employee or Employer screen
 
   @override
   Widget build(BuildContext context) {
@@ -23,12 +24,12 @@ class _SelectionScreenState extends State<SelectionScreen> {
             children: [
               Text(
                 _isEmployer ? "Employer" : "Employee",
-                style: TextStyle(
+                style: const TextStyle(
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
                 ),
               ),
-              SizedBox(width: 10), // Adds spacing between text and switch
+              const SizedBox(width: 10), // Adds spacing between text and switch
               Switch(
                 value: _isEmployer,
                 onChanged: (value) {
@@ -39,12 +40,12 @@ class _SelectionScreenState extends State<SelectionScreen> {
               ),
             ],
           ),
-          SizedBox(height: 20), // Space between switch and body
+          const SizedBox(height: 20), // Space between switch and body
           Expanded(
             child: Center(
               child: _isEmployer
                   ? EmployerBody() // Show EmployerScreen when switch is ON
-                  : EmployeeBody(),   // Show EmployeeBody when switch is OFF
+                  : EmployeeBody(), // Show EmployeeBody when switch is OFF
             ),
           ),
         ],
@@ -54,16 +55,19 @@ class _SelectionScreenState extends State<SelectionScreen> {
 }
 
 class EmployeeBody extends StatelessWidget {
+  const EmployeeBody({super.key});
+
   @override
   Widget build(BuildContext context) {
-    return EmployeeScreen();
+    return const EmployeeScreen();
   }
 }
 
-
 class EmployerBody extends StatelessWidget {
+  const EmployerBody({super.key});
+
   @override
   Widget build(BuildContext context) {
-    return EmployerScreen();
+    return const EmployerScreen();
   }
 }

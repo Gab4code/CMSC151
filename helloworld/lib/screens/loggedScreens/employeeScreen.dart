@@ -5,7 +5,7 @@ class EmployeeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Text(
+    return const Text(
       "This is Employee Screen",
       style: TextStyle(fontSize: 24),
     );

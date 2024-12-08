@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:helloworld/screens/loginPage.dart';
 
 class Landing extends StatelessWidget {
+  const Landing({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -19,7 +21,8 @@ class Landing extends StatelessWidget {
             'images/Twerk.PNG',
             width: 400, // Adjust the width of the image
             height: 400, // Adjust the height of the image
-            fit: BoxFit.contain, // Ensures the image fits within the given dimensions
+            fit: BoxFit
+                .contain, // Ensures the image fits within the given dimensions
           ),
         ),
       ),

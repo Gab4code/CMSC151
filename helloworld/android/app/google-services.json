@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "35872838689",
+    "project_id": "twerk-f6530",
+    "storage_bucket": "twerk-f6530.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:35872838689:android:1a8ef237f63826bbb2ff60",
+        "android_client_info": {
+          "package_name": "com.example.helloworld"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAAz78CROoSU_JtMqd_walOrap43yqI-gI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:35872838689:android:5f3b0148d1f6f04eb2ff60",
+        "android_client_info": {
+          "package_name": "com.twerk.app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAAz78CROoSU_JtMqd_walOrap43yqI-gI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

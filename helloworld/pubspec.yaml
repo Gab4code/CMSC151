@@ -30,6 +30,9 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  firebase_core: ^3.8.1 # Always use the latest version
+  firebase_auth: ^5.3.4 # Example for Firebase Authentication
+  firebase_database: ^11.0.7 # Example for Firebase Realtime Database
 
 
   # The following adds the Cupertino Icons font to your application.
@@ -40,6 +43,7 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
   google_fonts: ^4.0.3
+  
 
   # The "flutter_lints" package below contains a set of recommended lints to
   # encourage good coding practices. The lint set provided by the package is

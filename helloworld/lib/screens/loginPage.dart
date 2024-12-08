@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:helloworld/screens/loggedScreens/homePage.dart';
 import 'package:helloworld/screens/registerPage.dart';
 
 class LoginPage extends StatefulWidget {
@@ -155,6 +156,10 @@ class _LoginPageState extends State<LoginPage> {
             //LOGIN BUTTON
             ElevatedButton(
               onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => HomePage()),
+                );
                 // Handle login action here
                 String email = emailController.text;
                 String password = passwordController.text;

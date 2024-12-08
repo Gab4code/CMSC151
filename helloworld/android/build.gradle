@@ -17,8 +17,6 @@ plugins {
 
 }
 
-
-
 allprojects {
     repositories {
         google()

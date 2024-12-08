@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:helloworld/auth.dart';
 import 'package:helloworld/screens/loggedScreens/homePage.dart';
 import 'package:helloworld/screens/registerPage.dart';
 
@@ -178,16 +179,40 @@ class _LoginPageState extends State<LoginPage> {
 
               //LOGIN BUTTON
               ElevatedButton(
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => const HomePage()),
-                  );
-                  // Handle login action here
+                onPressed: () async {
                   String email = emailController.text;
                   String password = passwordController.text;
-                  print('Entered email: $email');
-                  print('Entered password: $password');
+
+                  if (email.isEmpty || password.isEmpty) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text('Please enter both email and password.'),
+                        backgroundColor: Colors.red,
+                      ),
+                    );
+                    return;
+                  }
+
+                  bool isSuccessful = await AuthService.login(
+                    email: email,
+                    password: password,
+                    context: context,
+                  );
+
+                  if (isSuccessful) {
+                    // Navigate to the home page if login is successful
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => const HomePage()),
+                    );
+
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text('Login successful!'),
+                        backgroundColor: Colors.green,
+                      ),
+                    );
+                  }
                 },
                 style: ElevatedButton.styleFrom(
                   padding:

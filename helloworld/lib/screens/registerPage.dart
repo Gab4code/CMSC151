@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:helloworld/auth.dart';
+import 'package:helloworld/screens/loggedScreens/homePage.dart';
 import 'package:helloworld/screens/loginPage.dart';
 
 class RegisterPage extends StatefulWidget {
@@ -306,7 +307,7 @@ class _RegisterPageState extends State<RegisterPage> {
                 onPressed: () {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => LoginPage()),
+                    MaterialPageRoute(builder: (context) => const LoginPage()),
                   );
                 },
                 style: ElevatedButton.styleFrom(
@@ -339,12 +340,28 @@ class _RegisterPageState extends State<RegisterPage> {
                     return;
                   }
 
-                  await AuthService.signUp(
+                  bool isSuccessful = await AuthService.signUp(
                     email: emailController.text,
                     password: passwordController.text,
                     username: usernameController.text,
                     context: context,
                   );
+
+                  if (isSuccessful) {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) =>
+                              const HomePage()), // Replace `NextPage` with your desired page widget.
+                    );
+                  } else {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text('Sign-up failed. Please try again.'),
+                        backgroundColor: Colors.red,
+                      ),
+                    );
+                  }
                 },
                 style: ElevatedButton.styleFrom(
                   padding:

@@ -1,20 +1,33 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class AuthService {
   static final FirebaseAuth _auth = FirebaseAuth.instance;
+  static final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
   static Future<void> signUp({
     required String email,
     required String password,
+    required String username, // Include any additional user details
     required BuildContext context,
   }) async {
     try {
       // Attempt to create a user with email and password
-      await _auth.createUserWithEmailAndPassword(
+      UserCredential userCredential = await _auth.createUserWithEmailAndPassword(
         email: email,
         password: password,
       );
+
+      // Get the newly created user ID
+      String userId = userCredential.user!.uid;
+
+      // Save user details to Firestore
+      await _firestore.collection('Users').doc(userId).set({
+        'email': email,
+        'username': username,
+        'createdAt': FieldValue.serverTimestamp(),
+      });
 
       // Show success message
       ScaffoldMessenger.of(context).showSnackBar(

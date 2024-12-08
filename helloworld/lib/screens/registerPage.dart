@@ -342,6 +342,7 @@ class _RegisterPageState extends State<RegisterPage> {
                   await AuthService.signUp(
                     email: emailController.text,
                     password: passwordController.text,
+                    username: usernameController.text,
                     context: context,
                   );
                 },

@@ -29,6 +29,8 @@ class AuthService {
         'email': email,
         'username': username,
         'createdAt': FieldValue.serverTimestamp(),
+        'mobileNumber': "",
+        'address': "",
       });
 
       await _firestore
@@ -189,6 +191,43 @@ class AuthService {
           backgroundColor: Colors.red,
         ),
       );
+    }
+  }
+  // ===========================================================================
+}
+
+class UserDataService {
+  // Function to fetch user data using the logged-in user's email
+  Future<Map<String, String?>> fetchUserData() async {
+    try {
+      // Get the current logged-in user
+      //User? user = FirebaseAuth.instance.currentUser;
+      String user = FirebaseAuth.instance.currentUser!.uid;
+
+      // Use the user's email or UID to query Firestore
+      //String userEmail = user.email ?? '';
+
+      // Retrieve the user data from Firestore
+      DocumentSnapshot snapshot = await FirebaseFirestore.instance
+          .collection('Users') // The Firestore collection name
+          .doc(
+              user) // Use the email as the document ID (or use user.uid for UID-based document)
+          .get();
+      if (snapshot.exists) {
+        // Return user data as a Map
+        return {
+          'username': snapshot['username'] ?? '',
+          'email': snapshot['email'] ?? '',
+          'mobileNumber': snapshot['mobileNumber'] ?? '',
+          'address': snapshot['address'] ?? '',
+        };
+      } else {
+        print("No user found for the email: $user");
+        return {};
+      }
+    } catch (e) {
+      print("Error fetching user data: $e");
+      return {};
     }
   }
 }

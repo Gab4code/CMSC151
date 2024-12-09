@@ -1,18 +1,55 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:helloworld/auth.dart';
+import 'package:helloworld/screens/loggedScreens/createJobScreen.dart';
 import 'package:helloworld/screens/loginPage.dart';
+//import 'package:helloworld/services/user_data_service.dart'; // Assuming the service is in this file
 
-class ProfilePage extends StatelessWidget {
+class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    // Controllers to capture the input values
-    TextEditingController usernameController = TextEditingController();
-    TextEditingController mobileController = TextEditingController();
-    TextEditingController addressController = TextEditingController();
+  _UserProfilePageState createState() => _UserProfilePageState();
+}
 
+class _UserProfilePageState extends State<ProfilePage> {
+  String username = '';
+  String email = '';
+  String mobileNumber = '';
+  String address = '';
+
+  final TextEditingController usernameController = TextEditingController();
+  final TextEditingController mobileController = TextEditingController();
+  final TextEditingController addressController = TextEditingController();
+
+  // Create an instance of UserDataService
+  final userDataService = UserDataService();
+
+  @override
+  void initState() {
+    super.initState();
+    fetchUserData();
+  }
+
+  // Function to fetch user data
+  Future<void> fetchUserData() async {
+    var userData = await userDataService.fetchUserData();
+
+    // Check if data is not empty and update the state
+    if (userData.isNotEmpty) {
+      setState(() {
+        username = userData['username'] ?? '';
+        email = userData['email'] ?? '';
+        mobileNumber = userData['mobileNumber'] ?? '';
+        address = userData['address'] ?? '';
+      });
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text(
@@ -47,7 +84,7 @@ class ProfilePage extends StatelessWidget {
             ),
             const SizedBox(height: 16),
             Text(
-              "John Doe",
+              username,
               style: GoogleFonts.poppins(
                 fontSize: 24,
                 fontWeight: FontWeight.bold,
@@ -55,10 +92,33 @@ class ProfilePage extends StatelessWidget {
             ),
             const SizedBox(height: 8),
             Text(
-              "john.doe@example.com",
+              email,
               style: GoogleFonts.poppins(
                 fontSize: 16,
                 color: Colors.grey[600],
+              ),
+            ),
+            const SizedBox(height: 16),
+            Divider(
+              color: Colors.grey[400],
+              thickness: 1,
+            ),
+            const SizedBox(height: 16),
+            // Mobile Number
+            Text(
+              "Mobile Number: $mobileNumber",
+              style: GoogleFonts.poppins(
+                fontSize: 16,
+                color: Colors.grey[700],
+              ),
+            ),
+            const SizedBox(height: 16),
+            // Address
+            Text(
+              "Address: $address",
+              style: GoogleFonts.poppins(
+                fontSize: 16,
+                color: Colors.grey[700],
               ),
             ),
             const SizedBox(height: 16),
@@ -230,17 +290,20 @@ class ProfilePage extends StatelessWidget {
                               borderRadius: BorderRadius.circular(12),
                             ),
                           ),
-                          onPressed: () {
-                            String username = usernameController.text;
-                            String mobile = mobileController.text;
-                            String address = addressController.text;
+                          onPressed: () async {
+                            // Save changes logic
+                            User? user = FirebaseAuth.instance.currentUser;
+                            // Reference to Firestore and the specific user document
+                            CollectionReference users =
+                                FirebaseFirestore.instance.collection('Users');
 
-                            // Example of saving the values
-                            print("Username: $username");
-                            print("Mobile: $mobile");
-                            print("Address: $address");
-
-                            // Close the dialog after saving
+                            // Update the user data in Firestore
+                            await users.doc(user?.uid).update({
+                              'username': usernameController.text,
+                              'address': addressController.text,
+                              'mobileNumber': mobileController.text,
+                            });
+                            await fetchUserData();
                             Navigator.of(context).pop();
                           },
                           child: Text(
@@ -259,17 +322,6 @@ class ProfilePage extends StatelessWidget {
               },
             ),
             ListTile(
-              leading: const Icon(Icons.settings, color: Color(0xFF004AAD)),
-              title: Text(
-                "Settings",
-                style: GoogleFonts.poppins(fontSize: 16),
-              ),
-              onTap: () {
-                print("Settings tapped");
-                // Add your settings logic here
-              },
-            ),
-            ListTile(
               leading: const Icon(Icons.logout, color: Color(0xFF004AAD)),
               title: Text(
                 "Log Out",
@@ -285,7 +337,6 @@ class ProfilePage extends StatelessWidget {
                 );
                 print("Log Out tapped");
               },
-              // Add your log out logic here
             ),
           ],
         ),

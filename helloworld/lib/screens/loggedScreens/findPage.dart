@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:card_swiper/card_swiper.dart';
+import 'package:flutter_tindercard_plus/flutter_tindercard_plus.dart';
 
 class FindPage extends StatefulWidget {
   const FindPage({super.key});

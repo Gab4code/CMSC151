@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:helloworld/screens/loggedScreens/findPage.dart';
+import 'package:helloworld/screens/loggedScreens/profilePage.dart';
 import 'package:helloworld/screens/loggedScreens/selectionScreen.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -40,6 +41,8 @@ class _HomePageState extends State<HomePage> {
           IconButton(
             icon: const Icon(Icons.person), // Person icon
             onPressed: () {
+              Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => const ProfilePage()));
               // Add your logic here
               print("Person icon tapped!");
             },

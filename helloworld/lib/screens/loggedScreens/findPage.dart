@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:card_swiper/card_swiper.dart';
 import 'package:flutter_tindercard_plus/flutter_tindercard_plus.dart';
 
 class FindPage extends StatefulWidget {
@@ -51,8 +52,6 @@ class _FindPageState extends State<FindPage> {
     return null; // Return null if no user is found
   }
 
-
-
   // Fetch jobs across users from Firestore
   Future<void> fetchJobsAcrossUsers() async {
     try {
@@ -74,7 +73,8 @@ class _FindPageState extends State<FindPage> {
           // If 'JobStatus' is 'Available', fetch the job data from this document
           final jobData = {
             'JobName': activeDoc.data()?['JobName'] ?? 'Unnamed Job',
-            'JobDescription': activeDoc.data()?['JobDesc'] ?? 'No description provided',
+            'JobDescription':
+                activeDoc.data()?['JobDesc'] ?? 'No description provided',
           };
 
           // Add the job data to the fetchedJobs list
@@ -112,32 +112,32 @@ class _FindPageState extends State<FindPage> {
   }
 
   Future<void> addApplicantToEmployer(String employerId, String JobName) async {
-  final user = FirebaseAuth.instance.currentUser;
-  final userId = user?.uid;
-  if (user != null) {
-    try {
-      // Get the current user's details
-      final currentUserDetails = {
-        'email': user.email ?? 'No email provided',
-        'applicationDate': DateTime.now().toIso8601String(), // Optional field
-      };
+    final user = FirebaseAuth.instance.currentUser;
+    final userId = user?.uid;
+    if (user != null) {
+      try {
+        // Get the current user's details
+        final currentUserDetails = {
+          'email': user.email ?? 'No email provided',
+          'applicationDate': DateTime.now().toIso8601String(), // Optional field
+        };
 
-      // Write the current user's details to the Employer > Applicants collection
-      await _firestore
-          .collection('Users')
-          .doc(employerId)
-          .collection('Employer')
-          .doc('Active')
-          .collection('Applicants')
-          .doc(user.uid) // Use the current user's ID as the document ID
-          .set(currentUserDetails);
+        // Write the current user's details to the Employer > Applicants collection
+        await _firestore
+            .collection('Users')
+            .doc(employerId)
+            .collection('Employer')
+            .doc('Active')
+            .collection('Applicants')
+            .doc(user.uid) // Use the current user's ID as the document ID
+            .set(currentUserDetails);
 
-       // Write the current Employer's details to the Employee > Applications collection
-      final employerDetails = {
-        'employerId': employerId,
-        'jobName': JobName,
-        'applicationDate': DateTime.now().toIso8601String(), // Optional field
-      };
+        // Write the current Employer's details to the Employee > Applications collection
+        final employerDetails = {
+          'employerId': employerId,
+          'jobName': JobName,
+          'applicationDate': DateTime.now().toIso8601String(), // Optional field
+        };
 
       // Write the current Employer's detail > Employee Applications collection
       await _firestore
@@ -150,22 +150,25 @@ class _FindPageState extends State<FindPage> {
           .set(employerDetails); // Use the current user's ID as the document ID
           
 
-      print('Successfully added applicant details to the employer.');
+        print('Successfully added applicant details to the employer.');
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Application sent successfully!'),
+            backgroundColor: Color(0xFF004AAD),
+          ),
+        );
+      } catch (e) {
+        print('Error adding applicant: $e');
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Failed to send application!')),
+        );
+      }
+    } else {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Application sent successfully!'), backgroundColor: Color(0xFF004AAD),),
-      );
-    } catch (e) {
-      print('Error adding applicant: $e');
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Failed to send application!')),
+        const SnackBar(content: Text('No user is logged in!')),
       );
     }
-  } else {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('No user is logged in!')),
-    );
   }
-}
 
   @override
   Widget build(BuildContext context) {
@@ -227,27 +230,32 @@ class _FindPageState extends State<FindPage> {
                               ),
                             ),
                           ),
-                          swipeCompleteCallback: (CardSwipeOrientation orientation, int index) async {
+                          swipeCompleteCallback:
+                              (CardSwipeOrientation orientation,
+                                  int index) async {
                             if (orientation == CardSwipeOrientation.left) {
-                              print('Swiped Left: ${jobs[index]['JobName']}, SKIPPED');
-                              swipedCards.add(jobs[index]); // Add swiped card to the list
-                            } else if (orientation == CardSwipeOrientation.right) {
-                              print('Swiped Right: ${jobs[index]['JobName']}, APPLYING');
+                              print('Swiped Left: ${jobs[index]['JobName']}');
+                              swipedCards.add(
+                                  jobs[index]); // Add swiped card to the list
+                            } else if (orientation ==
+                                CardSwipeOrientation.right) {
+                              print('Swiped Right: ${jobs[index]['JobName']}');
                               swipedCards.add(jobs[index]);
 
                               // Fetch the user ID of the employer
-                              String? EmployerId = await GetCardUser(jobs[index]['JobName']);
-                              if (EmployerId != null) {
-                                print('Employer User ID: $EmployerId');
-
+                              String? userId =
+                                  await GetCardUser(jobs[index]['JobName']);
+                              if (userId != null) {
+                                print('Employer User ID: $userId');
                                 // Perform additional actions with the user ID, e.g., send a message or navigate to their profile
-                                 await addApplicantToEmployer(EmployerId, jobs[index]['JobName']);
                               } else {
-                                print('User not found for job: ${jobs[index]['JobName']}');
+                                print(
+                                    'User not found for job: ${jobs[index]['JobName']}');
                               }
-                            } 
+                            }
                             setState(() {
-                              jobs.removeAt(index); // Remove the card from the stack
+                              jobs.removeAt(
+                                  index); // Remove the card from the stack
                             });
                           },
                         ),

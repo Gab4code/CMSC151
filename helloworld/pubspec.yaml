@@ -35,7 +35,7 @@ dependencies:
   firebase_database: ^11.0.7 # Example for Firebase Realtime Database
   cloud_firestore: ^5.5.1
   flutter_tindercard_plus: ^0.0.2
-  #flutter_card_swiper: ^7.0.2
+  flutter_card_swiper: ^7.0.2
   card_swiper: ^3.0.1
 
   # The following adds the Cupertino Icons font to your application.

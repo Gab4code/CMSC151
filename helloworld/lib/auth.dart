@@ -47,10 +47,8 @@ class AuthService {
         'JobDesc': '',
         'JobStatus': '',
       });
-      await _firestore.collection('Users').doc(userId).collection('Employer').doc("History").set({
-        'JobName': '',
-        'JobDesc': '',
-        'JobStatus': '',
+      await _firestore.collection('Users').doc(userId).collection('Employer').doc("Applicants").set({
+        //SET APPLICANTS
       });
 
       // Show success message

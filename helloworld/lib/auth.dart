@@ -31,23 +31,43 @@ class AuthService {
         'createdAt': FieldValue.serverTimestamp(),
       });
 
-      await _firestore.collection('Users').doc(userId).collection('Employee').doc("Active").set({
+      await _firestore
+          .collection('Users')
+          .doc(userId)
+          .collection('Employee')
+          .doc("Active")
+          .set({
         'JobName': '',
         'JobDesc': '',
         'JobStatus': '',
       });
-      await _firestore.collection('Users').doc(userId).collection('Employee').doc("History").set({
+      await _firestore
+          .collection('Users')
+          .doc(userId)
+          .collection('Employee')
+          .doc("History")
+          .set({
         'JobName': '',
         'JobDesc': '',
         'JobStatus': '',
       });
 
-      await _firestore.collection('Users').doc(userId).collection('Employer').doc("Active").set({
+      await _firestore
+          .collection('Users')
+          .doc(userId)
+          .collection('Employer')
+          .doc("Active")
+          .set({
         'JobName': '',
         'JobDesc': '',
         'JobStatus': '',
       });
-      await _firestore.collection('Users').doc(userId).collection('Employer').doc("History").set({
+      await _firestore
+          .collection('Users')
+          .doc(userId)
+          .collection('Employer')
+          .doc("History")
+          .set({
         'JobName': '',
         'JobDesc': '',
         'JobStatus': '',

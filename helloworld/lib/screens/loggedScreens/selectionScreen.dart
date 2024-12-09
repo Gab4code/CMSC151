@@ -10,7 +10,8 @@ class SelectionScreen extends StatefulWidget {
 }
 
 class _SelectionScreenState extends State<SelectionScreen> {
-  bool _isEmployer = false; // Tracks whether to show Employee or Employer screen
+  bool _isEmployer =
+      false; // Tracks whether to show Employee or Employer screen
 
   @override
   Widget build(BuildContext context) {
@@ -44,7 +45,7 @@ class _SelectionScreenState extends State<SelectionScreen> {
             child: Center(
               child: _isEmployer
                   ? EmployerBody() // Show EmployerScreen when switch is ON
-                  : EmployeeBody(),   // Show EmployeeBody when switch is OFF
+                  : EmployeeBody(), // Show EmployeeBody when switch is OFF
             ),
           ),
         ],
@@ -59,7 +60,6 @@ class EmployeeBody extends StatelessWidget {
     return EmployeeScreen();
   }
 }
-
 
 class EmployerBody extends StatelessWidget {
   @override

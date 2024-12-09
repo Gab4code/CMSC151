@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:card_swiper/card_swiper.dart';
 import 'package:flutter_tindercard_plus/flutter_tindercard_plus.dart';
@@ -110,6 +111,65 @@ class _FindPageState extends State<FindPage> {
     }
   }
 
+  Future<void> addApplicantToEmployer(String employerId, String JobName) async {
+    final user = FirebaseAuth.instance.currentUser;
+    final userId = user?.uid;
+    if (user != null) {
+      try {
+        // Get the current user's details
+        final currentUserDetails = {
+          'email': user.email ?? 'No email provided',
+          'applicationDate': DateTime.now().toIso8601String(), // Optional field
+        };
+
+        // Write the current user's details to the Employer > Applicants collection
+        await _firestore
+            .collection('Users')
+            .doc(employerId)
+            .collection('Employer')
+            .doc('Active')
+            .collection('Applicants')
+            .doc(user.uid) // Use the current user's ID as the document ID
+            .set(currentUserDetails);
+
+        // Write the current Employer's details to the Employee > Applications collection
+        final employerDetails = {
+          'employerId': employerId,
+          'jobName': JobName,
+          'applicationDate': DateTime.now().toIso8601String(), // Optional field
+        };
+
+        // Write the current Employer's detail > Employee Applications collection
+        await _firestore
+            .collection('Users')
+            .doc(user.uid)
+            .collection('Employee')
+            .doc('Active')
+            .collection('Applicantions')
+            .doc(employerId)
+            .set(
+                employerDetails); // Use the current user's ID as the document ID
+
+        print('Successfully added applicant details to the employer.');
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Application sent successfully!'),
+            backgroundColor: Color(0xFF004AAD),
+          ),
+        );
+      } catch (e) {
+        print('Error adding applicant: $e');
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Failed to send application!')),
+        );
+      }
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('No user is logged in!')),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -127,59 +187,92 @@ class _FindPageState extends State<FindPage> {
         child: isLoading
             ? const CircularProgressIndicator() // Show loading spinner
             : jobs.isNotEmpty
-                ? TinderSwapCard(
-                    swipeUp: false,
-                    swipeDown: false,
-                    orientation: AmassOrientation.top,
-                    totalNum: jobs.length,
-                    stackNum: 3,
-                    maxWidth: MediaQuery.of(context).size.width * 0.9,
-                    maxHeight: MediaQuery.of(context).size.height * 0.7,
-                    minWidth: MediaQuery.of(context).size.width * 0.8,
-                    minHeight: MediaQuery.of(context).size.height * 0.6,
-                    cardBuilder: (context, index) => Card(
-                      elevation: 4,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(15),
-                      ),
-                      child: Padding(
-                        padding: const EdgeInsets.all(16.0),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Text(
-                              'Job Name: ${jobs[index]['JobName']}',
-                              style: const TextStyle(
-                                fontSize: 20,
-                                fontWeight: FontWeight.bold,
+                ? Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Expanded(
+                        child: TinderSwapCard(
+                          swipeUp: false,
+                          swipeDown: false,
+                          orientation: AmassOrientation.top,
+                          totalNum: jobs.length,
+                          stackNum: 3,
+                          maxWidth: MediaQuery.of(context).size.width * 0.9,
+                          maxHeight: MediaQuery.of(context).size.height * 0.7,
+                          minWidth: MediaQuery.of(context).size.width * 0.8,
+                          minHeight: MediaQuery.of(context).size.height * 0.6,
+                          cardBuilder: (context, index) => Card(
+                            elevation: 4,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(15),
+                            ),
+                            child: Padding(
+                              padding: const EdgeInsets.all(16.0),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Text(
+                                    'Job Name: ${jobs[index]['JobName']}',
+                                    style: const TextStyle(
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 10),
+                                  Text(
+                                    'Job Description: ${jobs[index]['JobDescription']}',
+                                    style: const TextStyle(
+                                      fontSize: 16,
+                                    ),
+                                  ),
+                                ],
                               ),
                             ),
-                            const SizedBox(height: 10),
-                            Text(
-                              'Job Description: ${jobs[index]['JobDescription']}',
-                              style: const TextStyle(
-                                fontSize: 16,
-                              ),
-                            ),
-                          ],
+                          ),
+                          swipeCompleteCallback:
+                              (CardSwipeOrientation orientation,
+                                  int index) async {
+                            if (orientation == CardSwipeOrientation.left) {
+                              print('Swiped Left: ${jobs[index]['JobName']}');
+                              swipedCards.add(
+                                  jobs[index]); // Add swiped card to the list
+                            } else if (orientation ==
+                                CardSwipeOrientation.right) {
+                              print('Swiped Right: ${jobs[index]['JobName']}');
+                              swipedCards.add(jobs[index]);
+
+                              // Fetch the user ID of the employer
+                              String? userId =
+                                  await GetCardUser(jobs[index]['JobName']);
+                              if (userId != null) {
+                                print('Employer User ID: $userId');
+                                // Perform additional actions with the user ID, e.g., send a message or navigate to their profile
+                              } else {
+                                print(
+                                    'User not found for job: ${jobs[index]['JobName']}');
+                              }
+                            }
+                            setState(() {
+                              jobs.removeAt(
+                                  index); // Remove the card from the stack
+                            });
+                          },
                         ),
                       ),
-                    ),
-                    swipeCompleteCallback:
-                        (CardSwipeOrientation orientation, int index) {
-                      if (orientation == CardSwipeOrientation.left) {
-                        print('Swiped Left: ${jobs[index]['JobName']}');
-                        swipedCards
-                            .add(jobs[index]); // Add swiped card to the list
-                      } else if (orientation == CardSwipeOrientation.right) {
-                        print('Swiped Right: ${jobs[index]['JobName']}');
-                        swipedCards.add(jobs[index]);
-                      }
-                      setState(() {
-                        jobs.removeAt(index); // Remove the card from the stack
-                      });
-                    },
+                      const Padding(
+                        padding: EdgeInsets.all(16.0),
+                        child: Text(
+                          'Swipe left to Skip  ---   Swipe right to Apply',
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontStyle: FontStyle.italic,
+                            color: Colors.grey,
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                    ],
                   )
                 : const Text('No jobs available!'),
       ),

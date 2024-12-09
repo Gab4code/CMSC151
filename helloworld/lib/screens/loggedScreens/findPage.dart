@@ -145,7 +145,7 @@ class _FindPageState extends State<FindPage> {
           .doc(user.uid)
           .collection('Employee')
           .doc('Active')
-          .collection('Applicantions')
+          .collection('Applications')
           .doc(employerId)
           .set(employerDetails); // Use the current user's ID as the document ID
           

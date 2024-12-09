@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -14,11 +15,17 @@ class _EmployeeScreenState extends State<EmployeeScreen> {
   String jobName = "";
   String jobStatus = "";
 
+  final user = FirebaseAuth.instance.currentUser;
+
+  List<Map<String, dynamic>> applicationJobNames = []; // To store jobName and employerId
+
   Future<void> fetchJobData() async {
+    final userId = user?.uid;
+
     try {
       DocumentSnapshot documentSnapshot = await FirebaseFirestore.instance
           .collection('Users')
-          .doc('nKJW1wVMbWSvOxlkKsNOg9frgYv2')
+          .doc(userId)
           .collection('Employee')
           .doc('Active')
           .get();
@@ -46,10 +53,39 @@ class _EmployeeScreenState extends State<EmployeeScreen> {
     }
   }
 
+  Future<void> fetchApplications() async {
+    final userId = user?.uid;
+
+    try {
+      QuerySnapshot querySnapshot = await FirebaseFirestore.instance
+          .collection('Users')
+          .doc(userId)
+          .collection('Employee')
+          .doc('Active')
+          .collection('Applications')
+          .get();
+
+       List<Map<String, dynamic>> fetchedApplications = querySnapshot.docs.map((doc) {
+      final data = doc.data() as Map<String, dynamic>;
+      return {
+        'jobName': data['jobName'] ?? 'Unnamed Job',
+        'employerId': data['employerId'] ?? 'No EmployerID Job', // Assuming the document ID is the employerId
+      };
+    }).toList();
+
+      setState(() {
+        applicationJobNames = fetchedApplications;
+      });
+    } catch (e) {
+      print("Error fetching applications: $e");
+    }
+  }
+
   @override
   void initState() {
     super.initState();
     fetchJobData();
+    fetchApplications();
   }
 
   void FindNewJob() {
@@ -57,53 +93,93 @@ class _EmployeeScreenState extends State<EmployeeScreen> {
     print("Navigating to Create New Job screen...");
   }
 
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Padding(
         padding: const EdgeInsets.all(16.0),
-        child: Container(
-          padding: const EdgeInsets.all(16.0), // Optional padding inside the border
-            decoration: BoxDecoration(
-              border: Border.all(
-                color: Color(0xFF004AAD), // Border color
-                width: 2.0,         // Border width
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Container(
+              padding: const EdgeInsets.all(16.0), // Optional padding inside the border
+              decoration: BoxDecoration(
+                border: Border.all(
+                  color: Color(0xFF004AAD), // Border color
+                  width: 2.0,         // Border width
+                ),
+                borderRadius: BorderRadius.circular(8.0), // Optional rounded corners
               ),
-              borderRadius: BorderRadius.circular(8.0), // Optional rounded corners
-            ),
-          child: Center(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  "Active Job: $jobName",
-                  style: GoogleFonts.poppins(
-                        fontSize: 18,
-                        fontWeight: FontWeight.w600,
-                        color: Color(0xFF004AAD)),
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  "Job Status: $jobStatus",
-                  style: const TextStyle(fontSize: 16),
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  "Job Description: $jobDesc",
-                  style: const TextStyle(fontSize: 16),
-                ),
-                const SizedBox(height: 16),
-            if (jobName == "No Current Active Job")
-              Center(
-                child: ElevatedButton(
-                  onPressed: FindNewJob,
-                  child: const Text("Go to Find Jobs"),
+              child: Center(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      "Active Job: $jobName",
+                      style: GoogleFonts.poppins(
+                          fontSize: 18,
+                          fontWeight: FontWeight.w600,
+                          color: Color(0xFF004AAD)),
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      "Job Status: $jobStatus",
+                      style: const TextStyle(fontSize: 16),
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      "Job Description: $jobDesc",
+                      style: const TextStyle(fontSize: 16),
+                    ),
+                    const SizedBox(height: 16),
+                    if (jobName == "No Current Active Job")
+                      Center(
+                        child: ElevatedButton(
+                          onPressed: FindNewJob,
+                          child: const Text("Go to Find Jobs"),
+                        ),
+                      ),
+                  ],
                 ),
               ),
-              ],
             ),
-          ),
+            const SizedBox(height: 24), // Space between the container and the new text
+            Center(
+              child: Text(
+                "Applications",
+                style: GoogleFonts.poppins(
+                  fontSize: 18,
+                  fontWeight: FontWeight.w600,
+                  color: Color(0xFF004AAD),
+                ),
+              ),
+            ),
+            const SizedBox(height: 8), // Add some space between the header and list
+           Expanded(
+            child: ListView.builder(
+              itemCount: applicationJobNames.length,
+              itemBuilder: (context, index) {
+                final application = applicationJobNames[index];
+                return Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 4.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        "Job Name: ${application['jobName']}",
+                        style: const TextStyle(fontSize: 16),
+                      ),
+                      Text(
+                        "Employer ID: ${application['employerId']}",
+                        style: const TextStyle(fontSize: 14, color: Colors.grey),
+                      ),
+                    ],
+                  ),
+                );
+              },
+            ),
+          )
+          ],
         ),
       ),
     );

@@ -62,7 +62,7 @@ class _EmployerScreenState extends State<EmployerScreen> {
     Navigator.push(
       context,
       MaterialPageRoute(builder: (context) => const CreateJobScreen()),
-      );
+    );
     print("Navigating to Create New Job screen...");
   }
 
@@ -71,46 +71,62 @@ class _EmployerScreenState extends State<EmployerScreen> {
     return Scaffold(
       body: Padding(
         padding: const EdgeInsets.all(16.0),
-        child: Container(
-          padding: const EdgeInsets.all(16.0), // Optional padding inside the border
-            decoration: BoxDecoration(
-              border: Border.all(
-                color: Color(0xFF004AAD), // Border color
-                width: 2.0,         // Border width
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Container(
+              padding: const EdgeInsets.all(16.0), // Optional padding inside the border
+              decoration: BoxDecoration(
+                border: Border.all(
+                  color: Color(0xFF004AAD), // Border color
+                  width: 2.0,         // Border width
+                ),
+                borderRadius: BorderRadius.circular(8.0), // Optional rounded corners
               ),
-              borderRadius: BorderRadius.circular(8.0), // Optional rounded corners
-            ),
-          child: Center(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  "Active Job: $jobName",
-                  style: GoogleFonts.poppins(
-                        fontSize: 18,
-                        fontWeight: FontWeight.w600,
-                        color: Color(0xFF004AAD)),
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  "Job Status: $jobStatus",
-                  style: const TextStyle(fontSize: 16),
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  "Job Description: $jobDesc",
-                  style: const TextStyle(fontSize: 16),
-                ),
-                if (jobName == "No Current Active Job")
-              Center(
-                child: ElevatedButton(
-                  onPressed: createNewJob,
-                  child: const Text("Create New Job"),
+              child: Center(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      "Active Job: $jobName",
+                      style: GoogleFonts.poppins(
+                          fontSize: 18,
+                          fontWeight: FontWeight.w600,
+                          color: Color(0xFF004AAD)),
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      "Job Status: $jobStatus",
+                      style: const TextStyle(fontSize: 16),
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      "Job Description: $jobDesc",
+                      style: const TextStyle(fontSize: 16),
+                    ),
+                    if (jobName == "No Current Active Job")
+                      Center(
+                        child: ElevatedButton(
+                          onPressed: createNewJob,
+                          child: const Text("Create New Job"),
+                        ),
+                      ),
+                  ],
                 ),
               ),
-              ],
             ),
-          ),
+            const SizedBox(height: 16), // Space between the container and the new text
+            Center(
+              child: Text(
+                "Applications",  // New Text added below the container
+                style: GoogleFonts.poppins(
+                  fontSize: 18,
+                  fontWeight: FontWeight.w600,
+                  color: Color(0xFF004AAD),
+                ),
+              ),
+            ),
+          ],
         ),
       ),
     );

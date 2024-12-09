@@ -12,15 +12,19 @@ class CreateJobScreen extends StatefulWidget {
 }
 final FirebaseAuth _auth = FirebaseAuth.instance;
 final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+final user = FirebaseAuth.instance.currentUser;
+
 
 final TextEditingController JobNameController = TextEditingController();
 final TextEditingController JobDescController = TextEditingController();
 
 void createNewJob(BuildContext context) async {
   
+    final userId = user?.uid;
+
     // Add job to Firestore
     await _firestore.collection('Users')
-        .doc('nKJW1wVMbWSvOxlkKsNOg9frgYv2')
+        .doc(userId)
         .collection('Employer')
         .doc("Active")
         .set({

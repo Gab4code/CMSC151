@@ -34,6 +34,7 @@ dependencies:
   firebase_auth: ^5.3.4 # Example for Firebase Authentication
   firebase_database: ^11.0.7 # Example for Firebase Realtime Database
   cloud_firestore: ^5.5.1
+  flutter_tindercard_plus: ^0.0.2
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.

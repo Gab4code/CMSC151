@@ -29,14 +29,26 @@ class AuthService {
         'createdAt': FieldValue.serverTimestamp(),
       });
 
-      await _firestore.collection('Users').doc(userId).collection('Active').doc("Job").set({
+      await _firestore.collection('Users').doc(userId).collection('Employee').doc("Active").set({
         'JobName': '',
         'JobDesc': '',
+        'JobStatus': '',
+      });
+      await _firestore.collection('Users').doc(userId).collection('Employee').doc("History").set({
+        'JobName': '',
+        'JobDesc': '',
+        'JobStatus': '',
       });
 
-      await _firestore.collection('Users').doc(userId).collection('History').doc("Job").set({
+      await _firestore.collection('Users').doc(userId).collection('Employer').doc("Active").set({
         'JobName': '',
         'JobDesc': '',
+        'JobStatus': '',
+      });
+      await _firestore.collection('Users').doc(userId).collection('Employer').doc("History").set({
+        'JobName': '',
+        'JobDesc': '',
+        'JobStatus': '',
       });
 
       // Show success message

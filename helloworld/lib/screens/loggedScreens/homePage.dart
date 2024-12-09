@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:helloworld/screens/loggedScreens/findPage.dart';
 import 'package:helloworld/screens/loggedScreens/selectionScreen.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -19,12 +20,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   final List<Widget> _screens = [
-    const Center(
-      child: Text(
-        "Like Screen",
-        style: TextStyle(fontSize: 24),
-      ),
-    ),
+    const FindPage(),
     const SelectionScreen(),
   ];
 

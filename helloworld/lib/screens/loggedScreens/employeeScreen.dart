@@ -32,7 +32,7 @@ class _EmployeeScreenState extends State<EmployeeScreen> {
 
           jobName = (data['JobName'] != null && data['JobName'].trim().isNotEmpty)
               ? data['JobName']
-              : "No Available Data";
+              : "No Current Active Job";
 
           jobStatus = (data['JobStatus'] != null && data['JobStatus'].trim().isNotEmpty)
               ? data['JobStatus']
@@ -94,7 +94,7 @@ class _EmployeeScreenState extends State<EmployeeScreen> {
                   style: const TextStyle(fontSize: 16),
                 ),
                 const SizedBox(height: 16),
-            if (jobName == "No Available Data")
+            if (jobName == "No Current Active Job")
               Center(
                 child: ElevatedButton(
                   onPressed: FindNewJob,

@@ -33,7 +33,7 @@ class _EmployerScreenState extends State<EmployerScreen> {
 
           jobName = (data['JobName'] != null && data['JobName'].trim().isNotEmpty)
               ? data['JobName']
-              : "No Available Data";
+              : "No Current Active Job";
 
           jobStatus = (data['JobStatus'] != null && data['JobStatus'].trim().isNotEmpty)
               ? data['JobStatus']

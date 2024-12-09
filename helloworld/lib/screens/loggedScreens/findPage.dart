@@ -243,11 +243,13 @@ class _FindPageState extends State<FindPage> {
                               swipedCards.add(jobs[index]);
 
                               // Fetch the user ID of the employer
-                              String? userId =
+                              String? EmployerId =
                                   await GetCardUser(jobs[index]['JobName']);
-                              if (userId != null) {
-                                print('Employer User ID: $userId');
+                              if (EmployerId != null) {
+                                print('Employer User ID: $EmployerId');
                                 // Perform additional actions with the user ID, e.g., send a message or navigate to their profile
+
+                                await addApplicantToEmployer(EmployerId, jobs[index]['JobName']);
                               } else {
                                 print(
                                     'User not found for job: ${jobs[index]['JobName']}');

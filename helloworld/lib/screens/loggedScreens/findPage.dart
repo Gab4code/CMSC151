@@ -24,6 +24,32 @@ class _FindPageState extends State<FindPage> {
     });
   }
 
+  //Get UserID from Card Picked
+  Future<String?> GetCardUser(String jobName) async {
+    try {
+      // Query Firestore to find the user who posted the job with the given jobName
+      final userDocs = await _firestore.collection('Users').get();
+
+      for (var userDoc in userDocs.docs) {
+        // Check the 'Active' document within the 'Employer' collection
+        final activeDoc = await _firestore
+            .collection('Users')
+            .doc(userDoc.id)
+            .collection('Employer')
+            .doc('Active')
+            .get();
+
+        if (activeDoc.exists && activeDoc.data()?['JobName'] == jobName) {
+          // Return the user ID if the job matches
+          return userDoc.id;
+        }
+      }
+    } catch (e) {
+      print('Error fetching user ID for job "$jobName": $e');
+    }
+    return null; // Return null if no user is found
+  }
+
   // Fetch jobs across users from Firestore
   Future<void> fetchJobsAcrossUsers() async {
     try {
@@ -100,52 +126,58 @@ class _FindPageState extends State<FindPage> {
         child: isLoading
             ? const CircularProgressIndicator() // Show loading spinner
             : jobs.isNotEmpty
-                ? Swiper(
-                    itemBuilder: (BuildContext context, int index) {
-                      return Card(
-                        elevation: 4,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(15),
-                        ),
-                        child: Padding(
-                          padding: const EdgeInsets.all(16.0),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Text(
-                                'Job Name: ${jobs[index]['JobName']}',
-                                style: const TextStyle(
-                                  fontSize: 20,
-                                  fontWeight: FontWeight.bold,
-                                ),
+                ? TinderSwapCard(
+                    swipeUp: false,
+                    swipeDown: false,
+                    orientation: AmassOrientation.top,
+                    totalNum: jobs.length,
+                    stackNum: 3,
+                    maxWidth: MediaQuery.of(context).size.width * 0.9,
+                    maxHeight: MediaQuery.of(context).size.height * 0.7,
+                    minWidth: MediaQuery.of(context).size.width * 0.8,
+                    minHeight: MediaQuery.of(context).size.height * 0.6,
+                    cardBuilder: (context, index) => Card(
+                      elevation: 4,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(15),
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.all(16.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(
+                              'Job Name: ${jobs[index]['JobName']}',
+                              style: const TextStyle(
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold,
                               ),
-                              const SizedBox(height: 10),
-                              Text(
-                                'Job Description: ${jobs[index]['JobDescription']}',
-                                style: const TextStyle(
-                                  fontSize: 16,
-                                ),
+                            ),
+                            const SizedBox(height: 10),
+                            Text(
+                              'Job Description: ${jobs[index]['JobDescription']}',
+                              style: const TextStyle(
+                                fontSize: 16,
                               ),
-                            ],
-                          ),
+                            ),
+                          ],
                         ),
-                      );
-                    },
-                    itemCount: jobs.length,
-                    layout: SwiperLayout.STACK,
-                    itemWidth: MediaQuery.of(context).size.width * 0.9,
-                    itemHeight: MediaQuery.of(context).size.height * 0.7,
-                    onIndexChanged: (int index) {
-                      if (index >= jobs.length) return;
-                      // Track swiped cards
-                      swipedCards.add(jobs[index]);
+                      ),
+                    ),
+                    swipeCompleteCallback:
+                        (CardSwipeOrientation orientation, int index) {
+                      if (orientation == CardSwipeOrientation.left) {
+                        print('Swiped Left: ${jobs[index]['JobName']}');
+                        swipedCards
+                            .add(jobs[index]); // Add swiped card to the list
+                      } else if (orientation == CardSwipeOrientation.right) {
+                        print('Swiped Right: ${jobs[index]['JobName']}');
+                        swipedCards.add(jobs[index]);
+                      }
                       setState(() {
                         jobs.removeAt(index); // Remove the card from the stack
                       });
-                    },
-                    onTap: (index) {
-                      print('Tapped on card: ${jobs[index]['JobName']}');
                     },
                   )
                 : const Text('No jobs available!'),

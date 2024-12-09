@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:helloworld/screens/loggedScreens/createJobScreen.dart';
@@ -15,11 +16,15 @@ class _EmployerScreenState extends State<EmployerScreen> {
   String jobName = "";
   String jobStatus = "";
 
+  final user = FirebaseAuth.instance.currentUser;
+
   Future<void> fetchJobData() async {
+    final userId = user?.uid;
+
     try {
       DocumentSnapshot documentSnapshot = await FirebaseFirestore.instance
           .collection('Users')
-          .doc('nKJW1wVMbWSvOxlkKsNOg9frgYv2')
+          .doc(userId)
           .collection('Employer')
           .doc('Active')
           .get();
@@ -96,7 +101,7 @@ class _EmployerScreenState extends State<EmployerScreen> {
                   "Job Description: $jobDesc",
                   style: const TextStyle(fontSize: 16),
                 ),
-                if (jobName == "No Available Data")
+                if (jobName == "No Current Active Job")
               Center(
                 child: ElevatedButton(
                   onPressed: createNewJob,

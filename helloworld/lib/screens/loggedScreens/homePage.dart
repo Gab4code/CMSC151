@@ -64,12 +64,12 @@ class _HomePageState extends State<HomePage> {
         onTap: _onItemTapped, // Handle tap events
         items: const [
           BottomNavigationBarItem(
-            icon: Icon(Icons.thumb_up), // Like icon
-            label: "Like",
+            icon: Icon(Icons.search), // Like icon
+            label: "Find Job",
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.work), // Work icon
-            label: "Work",
+            label: "Manage Work",
           ),
         ],
       ),

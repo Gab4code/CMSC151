@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_tindercard_plus/flutter_tindercard_plus.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class FindPage extends StatefulWidget {
   const FindPage({super.key});
@@ -172,13 +173,22 @@ class _FindPageState extends State<FindPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Find Jobs'),
+        automaticallyImplyLeading: false,
+        title: Text(
+                        "Find Job",
+                        style: GoogleFonts.poppins(
+                          fontSize: 18,
+                          fontWeight: FontWeight.w600,
+                          color: Colors.white,
+                        ),
+                      ),
         backgroundColor: Colors.blueAccent,
         actions: [
           IconButton(
             icon: const Icon(Icons.undo),
             onPressed: goBackToPreviousCard,
           ),
+        
         ],
       ),
       body: Center(
